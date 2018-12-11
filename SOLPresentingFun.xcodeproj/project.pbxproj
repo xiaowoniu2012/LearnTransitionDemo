@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2A1DC2B921BA1B2100B4E785 /* SOLPanGestureAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A1DC2B821BA1B2100B4E785 /* SOLPanGestureAnimator.m */; };
+		2AF3B19B21BF5A8100C919AB /* BVAnimatorProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AF3B19A21BF5A8100C919AB /* BVAnimatorProvider.m */; };
+		2AF3B19F21BF6ABA00C919AB /* UIViewController+BVAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AF3B19E21BF6ABA00C919AB /* UIViewController+BVAnimator.m */; };
 		881257AF17FF46D900B0025E /* SOLBounceTransitionAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 881257AE17FF46D900B0025E /* SOLBounceTransitionAnimator.m */; };
 		881257B217FF4B0000B0025E /* SOLBounceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 881257B117FF4B0000B0025E /* SOLBounceViewController.m */; };
 		88190A1D1818A3BA00E3ABB3 /* SOLOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 88190A1C1818A3BA00E3ABB3 /* SOLOptions.m */; };
@@ -37,6 +39,10 @@
 /* Begin PBXFileReference section */
 		2A1DC2B721BA1B2100B4E785 /* SOLPanGestureAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SOLPanGestureAnimator.h; sourceTree = "<group>"; };
 		2A1DC2B821BA1B2100B4E785 /* SOLPanGestureAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SOLPanGestureAnimator.m; sourceTree = "<group>"; };
+		2AF3B19921BF5A8100C919AB /* BVAnimatorProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BVAnimatorProvider.h; sourceTree = "<group>"; };
+		2AF3B19A21BF5A8100C919AB /* BVAnimatorProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BVAnimatorProvider.m; sourceTree = "<group>"; };
+		2AF3B19D21BF6ABA00C919AB /* UIViewController+BVAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BVAnimator.h"; sourceTree = "<group>"; };
+		2AF3B19E21BF6ABA00C919AB /* UIViewController+BVAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BVAnimator.m"; sourceTree = "<group>"; };
 		881257AD17FF46D900B0025E /* SOLBounceTransitionAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOLBounceTransitionAnimator.h; sourceTree = "<group>"; };
 		881257AE17FF46D900B0025E /* SOLBounceTransitionAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SOLBounceTransitionAnimator.m; sourceTree = "<group>"; };
 		881257B017FF4B0000B0025E /* SOLBounceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SOLBounceViewController.h; sourceTree = "<group>"; };
@@ -97,6 +103,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2AF3B19821BF5A6800C919AB /* TransitionProvider */ = {
+			isa = PBXGroup;
+			children = (
+				2AF3B19921BF5A8100C919AB /* BVAnimatorProvider.h */,
+				2AF3B19A21BF5A8100C919AB /* BVAnimatorProvider.m */,
+				2AF3B19D21BF6ABA00C919AB /* UIViewController+BVAnimator.h */,
+				2AF3B19E21BF6ABA00C919AB /* UIViewController+BVAnimator.m */,
+			);
+			path = TransitionProvider;
+			sourceTree = "<group>";
+		};
 		8809B3F717FA4E9800A98ABA /* Animators */ = {
 			isa = PBXGroup;
 			children = (
@@ -192,6 +209,7 @@
 		88F9875D17ECF85500BEF90C /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2AF3B19821BF5A6800C919AB /* TransitionProvider */,
 				88ACEF051822E8BA0022A045 /* SOLAppDelegate.h */,
 				88ACEF061822E8BA0022A045 /* SOLAppDelegate.m */,
 				88190A1A1818A39500E3ABB3 /* Models */,
@@ -286,6 +304,8 @@
 				882B4DDA1803432D0080F7F0 /* SOLFoldViewController.m in Sources */,
 				88190A1D1818A3BA00E3ABB3 /* SOLOptions.m in Sources */,
 				88C9A74E1815E6CD00B01D2C /* SOLBaseTransitionAnimator.m in Sources */,
+				2AF3B19F21BF6ABA00C919AB /* UIViewController+BVAnimator.m in Sources */,
+				2AF3B19B21BF5A8100C919AB /* BVAnimatorProvider.m in Sources */,
 				88AC9DBD1819AD300030F749 /* SOLOptionsViewController.m in Sources */,
 				88ACEF071822E8BA0022A045 /* SOLAppDelegate.m in Sources */,
 				88F9876E17ECF85500BEF90C /* SOLViewController.m in Sources */,
