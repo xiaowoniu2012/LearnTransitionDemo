@@ -17,9 +17,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    if (self.animator) {
-        
-    }
+
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
     btn.frame = CGRectMake(100, 100, 100, 50);
     [btn setTitle:@"<Back" forState:UIControlStateNormal];
@@ -44,22 +42,4 @@
 }
 
 
-- (id<UIViewControllerAnimatedTransitioning>)animator {
-    if (!_animator) {
-        SOLOptions *options = [SOLOptions sharedOptions];
-        SOLSlideTransitionAnimator *temp = [[SOLSlideTransitionAnimator alloc] init];
-        temp.appearing = NO;
-        temp.duration = options.duration;
-        temp.edge = SOLEdgeCustom;
-        
-        SOLPanGestureAnimator *interAnimator = [[SOLPanGestureAnimator alloc] initWithView:self.view recognizerBlock:^{
-            [self dismissViewControllerAnimated:YES completion:nil];
-        }];
-        interAnimator.presenting = temp.isAppearing;
-        temp.interactor = interAnimator;
-        self.animator = temp;
-        
-    }
-    return _animator;
-}
 @end

@@ -20,6 +20,7 @@
 #import "SOLSlideViewController.h"
 #import "SOLViewController.h"
 #import "SOLPanGestureAnimator.h"
+#import "UIViewController+BVAnimator.h"
 
 // Table view sections
 typedef NS_ENUM(NSInteger, TableViewSection) {
@@ -43,6 +44,7 @@ static NSString * const kSegueSlideModal     = @"slideModal";
 static NSString * const kSegueSlidePush      = @"slidePush";
 
 @interface SOLViewController () <UIViewControllerTransitioningDelegate, UINavigationControllerDelegate>
+@property (nonatomic,strong) SOLSlideViewController *solidVC;
 @end
 
 @implementation SOLViewController
@@ -97,7 +99,22 @@ static NSString * const kSegueSlidePush      = @"slidePush";
     else if ([segue.identifier isEqualToString:kSegueSlidePush]) {
         self.navigationController.delegate = self;
         UIViewController *toVC = segue.destinationViewController;
-        toVC.transitioningDelegate = self;
+//        toVC.transitioningDelegate = self;
+        
+        BVAnimatorProvider *provider = [[BVAnimatorProvider alloc] init];
+        SOLSlideTransitionAnimator *animator = [[SOLSlideTransitionAnimator alloc] init];
+//        animator.duration = 1;
+        animator.edge = SOLEdgeTop;
+//        animator.dampingRatio = 0.6;
+//        animator.velocity =  1.0;
+        SOLPanGestureAnimator *Pan = [[SOLPanGestureAnimator alloc] initWithView:toVC.view recognizerBlock:^{
+            [toVC.navigationController popViewControllerAnimated:YES];
+        }];
+        animator.interactor = Pan;
+        [provider attachAnimator:animator options:BVAnimatorOptionPush | BVAnimatorOptionPop];
+        toVC.bv_animatorProvider = provider;
+         
+        
     }
     // Slide - modal
     else if ([segue.identifier isEqualToString:kSegueSlideModal]) {
@@ -202,6 +219,7 @@ static NSString * const kSegueSlidePush      = @"slidePush";
 /*
  Called when presenting a view controller that has a transitioningDelegate
  */
+/*
 - (id<UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented
                                                                   presentingController:(UIViewController *)presenting
                                                                       sourceController:(UIViewController *)source
@@ -225,6 +243,7 @@ static NSString * const kSegueSlidePush      = @"slidePush";
         animator.duration = options.duration;
         animator.edge = options.edge;
         animationController = animator;
+        self.solidVC =  (SOLSlideViewController *)presented;
     }
     // Bounce
     else if ([presented isKindOfClass:[SOLBounceViewController class]]) {
@@ -253,10 +272,12 @@ static NSString * const kSegueSlidePush      = @"slidePush";
     
     return animationController;
 }
-
+*/
 /*
  Called when dismissing a view controller that has a transitioningDelegate
  */
+
+/*
 - (id<UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed
 {
     id<UIViewControllerAnimatedTransitioning> animationController;
@@ -273,17 +294,18 @@ static NSString * const kSegueSlidePush      = @"slidePush";
     }
     // Slide
     else if ([dismissed isKindOfClass:[SOLSlideViewController class]]) {
-//        SOLSlideTransitionAnimator *animator = [[SOLSlideTransitionAnimator alloc] init];
-//        animator.appearing = NO;
-//        animator.duration = options.duration;
-//        animator.edge = options.edge;
+        SOLSlideTransitionAnimator *animator = [[SOLSlideTransitionAnimator alloc] init];
+        animator.appearing = NO;
+        animator.duration = options.duration;
+        animator.edge = options.edge;
+        animationController = animator;
 //
-        SOLSlideViewController *slide = (SOLSlideViewController *)dismissed;
-//        pop = slide.interactionController;
-//        SOLPanGestureAnimator *interAnimator = [[SOLPanGestureAnimator alloc] initWithView:slide.view recognizerBlock:nil];
-//        animator.interactor = interAnimator;
-//        animationController = animator;
-        animationController = slide.animator;
+//        SOLSlideViewController *slide = (SOLSlideViewController *)dismissed;
+////        pop = slide.interactionController;
+////        SOLPanGestureAnimator *interAnimator = [[SOLPanGestureAnimator alloc] initWithView:slide.view recognizerBlock:nil];
+////        animator.interactor = interAnimator;
+////        animationController = animator;
+//        animationController = slide.animator;
         
     }
     // Bounce
@@ -320,26 +342,34 @@ static NSString * const kSegueSlidePush      = @"slidePush";
 //}
 //
 - (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id <UIViewControllerAnimatedTransitioning>)animator {
-    if ([animator isKindOfClass:[SOLBaseTransitionAnimator class]]) {
-        SOLBaseTransitionAnimator *baseAnimator = animator;
-        return baseAnimator.interactor;
-    }
-    return nil;
+    return self.solidVC.animator;
 }
 
 #pragma mark - UINavigationControllerDelegate
+*/
 
-static UIPercentDrivenInteractiveTransition *pop = nil;
 /*
  Called when pushing/popping a view controller on a navigation controller that has a delegate
  */
+
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
                                   animationControllerForOperation:(UINavigationControllerOperation)operation
                                                fromViewController:(UIViewController *)fromVC
                                                  toViewController:(UIViewController *)toVC
 {
-    id<UIViewControllerAnimatedTransitioning> animationController;
     
+    
+    UIViewController *vc;
+    if (operation == UINavigationControllerOperationPop) {
+        vc = fromVC;
+    }else if (operation == UINavigationControllerOperationPush) {
+        vc = toVC;
+    }
+    return [vc.bv_animatorProvider navigationController:navigationController animationControllerForOperation:operation fromViewController:fromVC toViewController:toVC];
+     
+    
+    
+     id<UIViewControllerAnimatedTransitioning> animationController;
     SOLOptions *options = [SOLOptions sharedOptions];
     
     // Slide - Push
@@ -396,15 +426,17 @@ static UIPercentDrivenInteractiveTransition *pop = nil;
     }
     
     return animationController;
+    
 }
 
 - (nullable id <UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                                   interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioning>) animationController NS_AVAILABLE_IOS(7_0) {
-    if([navigationController.topViewController isKindOfClass:[SOLSlideViewController class]]){
-        return nil;
+                                   interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioningExtend>) animationController NS_AVAILABLE_IOS(7_0) {
+    if(animationController.interactor.isInteracting) {
+        return animationController.interactor;
     }else{
-        return pop;
+        return nil;
     }
+    
 }
 
 #pragma mark - Storyboard unwinding

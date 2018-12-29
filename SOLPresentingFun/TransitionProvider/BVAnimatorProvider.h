@@ -16,19 +16,31 @@ typedef NS_OPTIONS(NSUInteger, BVAnimatorOption) {
 
 };
 
-typedef NS_OPTIONS(NSUInteger, BVInteractorOption) {
-    BVInteractorOptionPresent = 1 << 0,
-    BVInteractorOptionDismisal = 1 << 1,
-    BVInteractorOptionPush = 1 << 2,
-    BVInteractorOptionPop = 1 << 3,
-};
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol UIViewControllerInteractiveTransitioningExtend <UIViewControllerInteractiveTransitioning>
+
+@property (nonatomic, assign, getter = isInteracting) BOOL interacting;
+
+@end
+
+@protocol UIViewControllerAnimatedTransitioningExtend <UIViewControllerAnimatedTransitioning>
+@property (nonatomic, assign) NSTimeInterval duration;
+@property (nonatomic, assign, getter = isAppearing) BOOL appearing;
+
+@property (nonatomic, strong) id<UIViewControllerInteractiveTransitioningExtend> interactor;
+@end
+
+
+
+
+
 @interface BVAnimatorProvider : NSObject <UIViewControllerTransitioningDelegate,UINavigationControllerDelegate>
-- (void)attachAnimator:(id<UIViewControllerAnimatedTransitioning>)animator
+@property (nonatomic,assign) BOOL enable;
+- (void)attachAnimator:(id<UIViewControllerAnimatedTransitioningExtend>)animator
                options:(BVAnimatorOption)options;
-- (void)attachInteractiveAnimator:(id<UIViewControllerInteractiveTransitioning>)animator
-                          options:(BVInteractorOption)options;
+//- (void)attachInteractiveAnimator:(id<UIViewControllerInteractiveTransitioning>)animator
+//                          options:(BVInteractorOption)options;
 @end
 
 NS_ASSUME_NONNULL_END

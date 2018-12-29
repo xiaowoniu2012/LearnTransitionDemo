@@ -33,8 +33,6 @@
     return self;
 }
 - (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
-
-//    [super startInteractiveTransition:transitionContext];
     self.contextData = transitionContext;
     UIView *containerView = [transitionContext containerView];
     UIView *toView = [transitionContext viewForKey:UITransitionContextToViewKey];
@@ -61,41 +59,46 @@
         }
 
     } else if (recognizer.state == UIGestureRecognizerStateChanged) {
-        CGPoint translation = [recognizer translationInView:view.window];
-        
-        CGFloat percentage = fabs(translation.x / CGRectGetWidth(view.bounds));
-        NSLog(@"t x = %f ,t y = %f, d is %f",translation.x,translation.y,percentage);
-
-//        CGPoint center = fromvc.view.center;
-//        fromvc.view.center = CGPointMake(center.x+translation.x, center.y+translation.y);
-        CGAffineTransform move = CGAffineTransformMakeTranslation(translation.x*(1-percentage), translation.y);
-        CGAffineTransform scale = CGAffineTransformMakeScale(1-percentage, 1-percentage);
-        CGAffineTransform combine = CGAffineTransformConcat(scale, move);
-        fromvc.view.transform = combine;
-        [self updateInteractiveTransition:percentage];
-    } else if (recognizer.state >= UIGestureRecognizerStateEnded) {
-        CGPoint translation = [recognizer translationInView:view];
-        CGFloat percentage = fabs(translation.x / CGRectGetWidth(view.bounds));
-        if (percentage >0.5) {
-            [self finishInteractiveTransition];
-        } else {
-            fromvc.view.transform  = CGAffineTransformIdentity;
-            [self cancelInteractiveTransition];
+        if (self.isInteracting) {
+            CGPoint translation = [recognizer translationInView:view.window];
             
+            CGFloat percentage = fabs(translation.x / CGRectGetWidth(view.bounds));
+            CGAffineTransform move = CGAffineTransformMakeTranslation(translation.x*(1-percentage), translation.y);
+            CGAffineTransform scale = CGAffineTransformMakeScale(1-percentage, 1-percentage);
+            CGAffineTransform combine = CGAffineTransformConcat(scale, move);
+            fromvc.view.transform = combine;
+            [self updateInteractiveTransition:percentage];
         }
-        self.interacting = NO;
+        
+    } else if (recognizer.state >= UIGestureRecognizerStateEnded) {
+        if (self.isInteracting) {
+            CGPoint translation = [recognizer translationInView:view];
+            CGFloat percentage = fabs(translation.x / CGRectGetWidth(view.bounds));
+            if (percentage >0.5) {
+                [self finishInteractiveTransition];
+            } else {
+                fromvc.view.transform  = CGAffineTransformIdentity;
+                [self cancelInteractiveTransition];
+                
+            }
+            self.interacting = NO;
+        }
+        
     }
 }
 
 
 - (void)updateInteractiveTransition:(CGFloat)percentComplete {
+    [super updateInteractiveTransition:percentComplete];
     UIView *toView = [self.contextData viewForKey:UITransitionContextToViewKey];
     toView.alpha = percentComplete;
 }
 - (void)cancelInteractiveTransition {
+    [super cancelInteractiveTransition];
     [self.contextData completeTransition:NO];
 }
 - (void)finishInteractiveTransition {
+    [super finishInteractiveTransition];
     UIView *toView = [self.contextData viewForKey:UITransitionContextToViewKey];
     toView.alpha = 1.0;
     [self addtionDissmissal];
@@ -109,7 +112,7 @@
         fromView.frame =  CGRectMake(100, 100, 100, 50);
     } completion:^(BOOL finished) {
         [fromView removeFromSuperview];
-           [self.contextData completeTransition:YES];
+        [self.contextData completeTransition:YES];
     }];
 }
 

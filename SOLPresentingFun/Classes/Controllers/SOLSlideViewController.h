@@ -10,5 +10,5 @@
 
 
 @interface SOLSlideViewController : UIViewController
-@property (nonatomic,strong) id<UIViewControllerAnimatedTransitioning> animator;
+
 @end

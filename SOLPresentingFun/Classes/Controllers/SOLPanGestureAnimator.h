@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "BVAnimatorProvider.h"
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SOLPanGestureAnimator : UIPercentDrivenInteractiveTransition
+@interface SOLPanGestureAnimator : UIPercentDrivenInteractiveTransition <UIViewControllerInteractiveTransitioningExtend>
 - (instancetype)initWithView:(UIView *)view
              recognizerBlock:(void(^ __nullable)(void))block;
 @property (nonatomic,getter=isPresenting) BOOL presenting;

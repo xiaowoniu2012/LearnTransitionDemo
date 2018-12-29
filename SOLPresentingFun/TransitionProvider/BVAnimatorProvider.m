@@ -13,70 +13,63 @@
 
 @implementation BVAnimatorProvider
 {
-    id<UIViewControllerAnimatedTransitioning> _presentAnimator;
-    id<UIViewControllerAnimatedTransitioning> _dismissalAnimator;
-    id<UIViewControllerAnimatedTransitioning> _pushAnimator;
-    id<UIViewControllerAnimatedTransitioning> _popAnimator;
-    
-    
-    id<UIViewControllerInteractiveTransitioning> _presentInteractor;
-    id<UIViewControllerInteractiveTransitioning> _dismissalInteractor;
-    id<UIViewControllerInteractiveTransitioning> _pushInteractor;
-    id<UIViewControllerInteractiveTransitioning> _popInteractor;
+    NSMutableDictionary *_animatorMap;
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _enable = YES;
+        _animatorMap = [NSMutableDictionary dictionary];
+    }
+    return self;
 }
 
 - (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source {
-    return  _presentAnimator;
+    return  [self animatorForAnimatorOption:BVAnimatorOptionPresent];
 }
 
 - (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
-    return  _dismissalAnimator;
+    return  [self animatorForAnimatorOption:BVAnimatorOptionDismisal];
 }
 
-- (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id <UIViewControllerAnimatedTransitioning>)animator {
-    return _presentInteractor;
-}
-
-- (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id <UIViewControllerAnimatedTransitioning>)animator {
-    return _popInteractor;
-}
-
-- (void)attachAnimator:(id<UIViewControllerAnimatedTransitioning>)animator
-               options:(BVAnimatorOption)options {
+- (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id <UIViewControllerAnimatedTransitioningExtend>)animator {
+    return animator.interactor.isInteracting ? animator.interactor : nil;
     
-    NSAssert(animator, @"animator is nil,must provide an vaild animator");
+}
+
+- (nullable id <UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id <UIViewControllerAnimatedTransitioningExtend>)animator {
+    return animator.interactor.isInteracting ? animator.interactor : nil;
+}
+
+- (nullable __kindof id <UIViewControllerAnimatedTransitioning>)animatorForAnimatorOption:(BVAnimatorOption)option {
+    if (!_enable) {
+        return nil;
+    }
+    id <UIViewControllerAnimatedTransitioningExtend> animator = _animatorMap[@(option)];
+    [animator setAppearing:((option & BVAnimatorOptionPush) || (option & BVAnimatorOptionPresent))];
+    return animator;
+}
+
+- (void)attachAnimator:(id<UIViewControllerAnimatedTransitioningExtend>)animator
+               options:(BVAnimatorOption)options {
+    NSAssert(animator, @"animator is nil,must provide a vaild animator");
+    if (!animator) {
+        return;
+    }
     if (options & BVAnimatorOptionPresent) {
-        _presentAnimator = animator;
+        _animatorMap[@(BVAnimatorOptionPresent)] = animator;
     }
     if (options & BVAnimatorOptionDismisal) {
-        _dismissalAnimator = animator;
+        _animatorMap[@(BVAnimatorOptionDismisal)] = animator;
     }
     if (options & BVAnimatorOptionPush) {
-        _pushAnimator = animator;
+        _animatorMap[@(BVAnimatorOptionPush)] = animator;
     }
     if (options & BVAnimatorOptionPop) {
-        _popAnimator = animator;
+        _animatorMap[@(BVAnimatorOptionPop)] = animator;
     }
 }
 
-
-
-- (void)attachInteractiveAnimator:(id<UIViewControllerInteractiveTransitioning>)animator
-                          options:(BVInteractorOption)options {
-    NSAssert(animator, @"animator is nil,must provide an vaild animator");
-    if (options & BVInteractorOptionPresent) {
-        _presentInteractor = animator;
-    }
-    if (options & BVInteractorOptionDismisal) {
-        _dismissalInteractor = animator;
-    }
-    if (options & BVInteractorOptionPush) {
-        _pushInteractor = animator;
-    }
-    if (options & BVInteractorOptionPop) {
-        _popInteractor = animator;
-    }
-}
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
                                   animationControllerForOperation:(UINavigationControllerOperation)operation
@@ -84,17 +77,17 @@
                                                  toViewController:(UIViewController *)toVC
 {
     if (operation == UINavigationControllerOperationPush) {
-        return _pushAnimator;
+        return [self animatorForAnimatorOption:BVAnimatorOptionPush];
     }else if (operation == UINavigationControllerOperationPop) {
-        return _popAnimator;
+        return [self animatorForAnimatorOption:BVAnimatorOptionPop];
     }
     return nil;
 }
 
 
 - (nullable id <UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                                   interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioning>) animationController  {
-    return _popInteractor;
+                                   interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioningExtend>) animationController  {
+    return animationController.interactor.isInteracting ? animationController.interactor : nil;
 }
 
 

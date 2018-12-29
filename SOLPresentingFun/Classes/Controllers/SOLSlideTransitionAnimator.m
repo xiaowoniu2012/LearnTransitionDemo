@@ -25,9 +25,6 @@
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
 
-    if (self.interactor) {
-        
-    }
     UIView *containerView = [transitionContext containerView];
     UIViewController *fromVC = [transitionContext
                                 viewControllerForKey:UITransitionContextFromViewControllerKey];
